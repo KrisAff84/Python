@@ -1,1 +1,1 @@
-# Python
+# This repository is a collection of Python coding exercises that I am completing as I learn Python
