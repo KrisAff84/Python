@@ -14,6 +14,7 @@ for dirpath, dirnames, filenames in os.walk('/Users/Kris/Desktop/'):
     print()
 
 print(os.environ.get('HOME'))
+#  os.listdir() prints files and directories in current directory or specified directory
 
 
 
