@@ -20,4 +20,4 @@ print(numbers)
 
 # Lists typically used for many values of same data type
 # Tuples usually used for values of different types but related
-
+# Tuples can be indexed and sliced just like lists

@@ -16,5 +16,7 @@ print(top_cities[0:3])  # returns range - exclusive
 print(top_cities[2: ])  # returns index 2 through end
 print(top_cities[:3])   # returns from start to 3
 
-
+# The following produces same result as integers[-2]
+integers = [1, 4, -2]
+print(integers[integers[-1]])
 
