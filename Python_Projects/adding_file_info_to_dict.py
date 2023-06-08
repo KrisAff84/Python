@@ -16,7 +16,7 @@ while True:
         print('Please enter a valid path: ')
 
 file_dict = {}
-for dirpaths, dirs, filenames in os.walk(path):
+for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         if os.path.isfile(os.path.join(path, filename)):
             file_size = os.stat(os.path.join(path, filename)).st_size / 1024
@@ -24,13 +24,18 @@ for dirpaths, dirs, filenames in os.walk(path):
             file_dict[filename] = 'File',\
                 f'Size {file_size} KB', \
                 f'Modified {file_mod_time} '
-    for dir in dirs:
-        if os.path.isdir(os.path.join(path, dir)):
-            dir_size = os.stat(os.path.join(path, dir)).st_size / 1024
-            dir_mod_time = time.ctime(os.path.getmtime(os.path.join(path, dir)))
-            file_dict[dir] = 'Directory',\
+        # if os.path.isfile(os.path.join(path, dir, filename)):
+        #     file_dict[filename] = 'Sub-directory'
+    for dirname in dirnames:
+        if os.path.isdir(os.path.join(path, dirname)):
+            dir_size = os.stat(os.path.join(path, dirname)).st_size / 1024
+            dir_mod_time = time.ctime(os.path.getmtime(os.path.join(path, dirname)))
+            file_dict[dirname] = 'Directory',\
                 f'Size {dir_size} KB', \
-                f'Modified {dir_mod_time}'
+                f'Modified {dir_mod_time}' \
+
+
+
 
 print()
 print('List of files and sub-directories in current directory:')
@@ -55,15 +60,3 @@ while True:
     print()
 
 # Works! Now figure out how to catalog files in sub-directories
-
-
-
-
-
-
-
-
-
-
-
-
