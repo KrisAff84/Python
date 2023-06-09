@@ -75,6 +75,9 @@ while True:
     if user_input == 'EXIT':
         print('Goodbye for now!')
         break
+    # Fix to include all sub-directories and files
+    # As of now only including up to path + user_input
+    # Possibly need to ammend path variable
     elif user_input in file_dict:
         if os.path.isdir(os.path.join(path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
