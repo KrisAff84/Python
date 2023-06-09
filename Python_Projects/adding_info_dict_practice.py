@@ -31,15 +31,18 @@ file_dict = {}
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         if os.path.isfile(os.path.join(dirpath, filename)):
-            file_size = os.stat(os.path.join(dirpath, filename)).st_size / 1024
+            file_size = os.path.getsize(os.path.join(dirpath, filename)) / 1024
             file_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, filename)))
             file_dict[filename] = 'File', \
                 f'Path: {dirpath}', \
                 f'Size: {file_size} KB', \
                 f'Last Modified: {file_mod_time} '
     for dirname in dirnames:
+        dir_size = 0
         if os.path.isdir(os.path.join(dirpath, dirname)):
-            dir_size = os.stat(os.path.join(dirpath, dirname)).st_size / 1024
+            for dpath, dnames, files in os.walk(os.path.join(dirpath, dirname)):
+                for file in files:
+                    dir_size += os.path.getsize(os.path.join(dpath, file)) / 1024
             dir_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, dirname)))
             file_dict[dirname] = 'Directory', \
                 f'Path: {dirpath}', \
@@ -69,19 +72,23 @@ print()
 # User prompt for more information about a given file or directory
 # Will list key and values of file_dict based on user input and display various information
 # Lists directories recursively
+amended_path = path
 while True:
     user_input = input('Enter a file or directory name to get information about it, or type ALL or EXIT: ')
     print()
     if user_input == 'EXIT':
         print('Goodbye for now!')
         break
-    # Fix to include all sub-directories and files
-    # As of now only including up to path + user_input
-    # Possibly need to ammend path variable
     elif user_input in file_dict:
         if os.path.isdir(os.path.join(path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
             print('Files and sub-directories: ', os.listdir(os.path.join(path, user_input)))
+            amended_path = os.path.join(path, user_input)
+            print()
+        elif os.path.isdir(os.path.join(amended_path, user_input)):
+            print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
+            print('Files and sub-directories: ', os.listdir(os.path.join(amended_path, user_input)))
+            amended_path = os.path.join(amended_path, user_input)
             print()
         else:
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
