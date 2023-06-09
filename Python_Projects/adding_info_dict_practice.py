@@ -7,6 +7,18 @@ class Format:      # defines various text styles
     underline = '\033[4m'
     green = '\033[92m'
 
+
+def get_dir_size(path='.'):
+    total = 0
+    with os.scandir(path) as it:
+        for entry in it:
+            if entry.is_file():
+                total += entry.stat().st_size
+            elif entry.is_dir():
+                total += get_dir_size(entry.path)
+    return total
+
+
 # Prompt for path to catalog
 # Prints current directory path
 while True:
@@ -32,17 +44,16 @@ for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         if os.path.isfile(os.path.join(dirpath, filename)):
             file_size = os.path.getsize(os.path.join(dirpath, filename)) / 1024
+            file_created = time.ctime(os.path.getctime(os.path.join(dirpath, filename)))
             file_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, filename)))
             file_dict[filename] = 'File', \
                 f'Path: {dirpath}', \
                 f'Size: {file_size} KB', \
                 f'Last Modified: {file_mod_time} '
     for dirname in dirnames:
-        dir_size = 0
         if os.path.isdir(os.path.join(dirpath, dirname)):
-            for dpath, dnames, files in os.walk(os.path.join(dirpath, dirname)):
-                for file in files:
-                    dir_size += os.path.getsize(os.path.join(dpath, file)) / 1024
+            dir_size = get_dir_size(os.path.join(dirpath, dirname)) / 1024
+            dir_created = time.ctime(os.path.getctime(os.path.join(dirpath, dirname)))
             dir_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, dirname)))
             file_dict[dirname] = 'Directory', \
                 f'Path: {dirpath}', \
@@ -98,4 +109,3 @@ while True:
     else:
         print('File not found!')
     print()
-
