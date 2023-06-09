@@ -7,6 +7,21 @@ class Format:      # defines various text styles
     underline = '\033[4m'
     green = '\033[92m'
 
+
+def get_dir_size(path):
+    dirsize = 0
+    with os.scandir(path) as itr:
+        for entry in itr:
+            if entry.is_file():
+                dirsize += entry.stat().st_size
+            elif entry.is_dir():
+                dirsize += get_dir_size(entry.path)
+    return dirsize
+
+
+isfile = os.path.isfile
+isdir = os.path.isdir
+
 # Prompt for path to catalog
 # Prints current directory path
 while True:
@@ -15,7 +30,7 @@ while True:
     if path == '':
         path = os.getcwd()
         print(Format.underline + 'Current Directory:' + Format.end)
-        print(os.getcwd())
+        print(path)
         print()
         break
     elif os.path.exists(path):
@@ -30,19 +45,18 @@ while True:
 file_dict = {}
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
-        if os.path.isfile(os.path.join(dirpath, filename)):
+        if isfile(os.path.join(dirpath, filename)):
             file_size = os.path.getsize(os.path.join(dirpath, filename)) / 1024
+            file_created = time.ctime(os.path.getctime(os.path.join(dirpath, filename)))
             file_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, filename)))
             file_dict[filename] = 'File', \
                 f'Path: {dirpath}', \
                 f'Size: {file_size} KB', \
                 f'Last Modified: {file_mod_time} '
     for dirname in dirnames:
-        dir_size = 0
-        if os.path.isdir(os.path.join(dirpath, dirname)):
-            for dpath, dnames, files in os.walk(os.path.join(dirpath, dirname)):
-                for file in files:
-                    dir_size += os.path.getsize(os.path.join(dpath, file)) / 1024
+        if isdir(os.path.join(dirpath, dirname)):
+            dir_size = get_dir_size(os.path.join(dirpath, dirname)) / 1024
+            dir_created = time.ctime(os.path.getctime(os.path.join(dirpath, dirname)))
             dir_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, dirname)))
             file_dict[dirname] = 'Directory', \
                 f'Path: {dirpath}', \
@@ -50,7 +64,7 @@ for dirpath, dirnames, filenames in os.walk(path):
                 f'Last Modified: {dir_mod_time} '
 
 # for key in file_dict.keys():
-#     if os.path.isdir(os.path.join(path, key)):
+#     if isdir(os.path.join(path, key)):
 #         print(key, file_dict[key])
 #         print('Files and sub-directories: ', os.listdir(os.path.join(path, key)))
 #         print()
@@ -60,12 +74,12 @@ print('************ ' + Format.underline + 'Files and directories in current dir
 print()
 print(Format.underline + 'DIRECTORIES:' + Format.end)
 for key in file_dict.keys():
-    if os.path.isdir(os.path.join(path, key)):
+    if isdir(os.path.join(path, key)):
         print(key)
 print()
 print(Format.underline + 'FILES:' + Format.end)
 for key in file_dict.keys():
-    if os.path.isfile(os.path.join(path, key)):
+    if isfile(os.path.join(path, key)):
         print(key)
 print()
 
@@ -80,12 +94,12 @@ while True:
         print('Goodbye for now!')
         break
     elif user_input in file_dict:
-        if os.path.isdir(os.path.join(path, user_input)):
+        if isdir(os.path.join(path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
             print('Files and sub-directories: ', os.listdir(os.path.join(path, user_input)))
             amended_path = os.path.join(path, user_input)
             print()
-        elif os.path.isdir(os.path.join(amended_path, user_input)):
+        elif isdir(os.path.join(amended_path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
             print('Files and sub-directories: ', os.listdir(os.path.join(amended_path, user_input)))
             amended_path = os.path.join(amended_path, user_input)
@@ -98,4 +112,3 @@ while True:
     else:
         print('File not found!')
     print()
-
