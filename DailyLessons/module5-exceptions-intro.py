@@ -8,6 +8,7 @@ print('The inverse of', value, 'is', 1 / value)
 # disrupts the normal flow of program instructions
 
 # We can use the following to handle exceptions:
+
 try:
     value = int(input('Enter an integer: '))
     print('The inverse of', value, 'is', 1 / value)
@@ -17,3 +18,5 @@ except ValueError:
 except ZeroDivisionError:
     print('Division by zero is not possible, sorry')
     value = int(input('Enter an integer: '))
+
+# Use raise SyntaxError to raise syntax errors
