@@ -9,18 +9,40 @@ class Format:      # defines various text styles
 
 
 def get_dir_size(path):
-    dirsize = 0
-    with os.scandir(path) as itr:
-        for entry in itr:
-            if entry.is_file():
-                dirsize += entry.stat().st_size
-            elif entry.is_dir():
-                dirsize += get_dir_size(entry.path)
-    return dirsize
+    try:
+        dirsize = 0
+        with os.scandir(path) as itr:
+            for entry in itr:
+                if entry.is_file(follow_symlinks=False):
+                    dirsize += entry.stat().st_size
+                elif entry.is_dir(follow_symlinks=False):
+                    dirsize += get_dir_size(entry.path)
+        return dirsize
+    except PermissionError:
+        dirsize = os.path.getsize(path)
+        return dirsize
+
+
+def size_convert(s):
+    if 1000 <= s < 1000 ** 2:
+        s = round(s / 1000, 2)
+        return str(s) + ' KB'
+    if 1000 ** 2 <= s < 1000 ** 3:
+        s = round(s / (1000 ** 2), 2)
+        return str(s) + ' MB'
+    if 1000 ** 3 <= s < 1000 ** 4:
+        s = round(s / (1000 ** 3), 2)
+        return str(s) + ' GB'
+    if s >= 1000 ** 4:
+        s = round(s / (1000 ** 4), 2)
+        return str(s) + ' TB'
+    else:
+        return str(s) + ' Bytes'
 
 
 isfile = os.path.isfile
 isdir = os.path.isdir
+
 
 # Prompt for path to catalog
 # Prints current directory path
@@ -46,28 +68,24 @@ file_dict = {}
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         if isfile(os.path.join(dirpath, filename)):
-            file_size = os.path.getsize(os.path.join(dirpath, filename)) / 1024
+            file_size = size_convert(os.path.getsize(os.path.join(dirpath, filename)))
             file_created = time.ctime(os.path.getctime(os.path.join(dirpath, filename)))
             file_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, filename)))
             file_dict[filename] = 'File', \
                 f'Path: {dirpath}', \
-                f'Size: {file_size} KB', \
+                f'Size: {file_size}', \
+                f'Created: {file_created}', \
                 f'Last Modified: {file_mod_time} '
     for dirname in dirnames:
         if isdir(os.path.join(dirpath, dirname)):
-            dir_size = get_dir_size(os.path.join(dirpath, dirname)) / 1024
+            dir_size = size_convert(get_dir_size(os.path.join(dirpath, dirname)))
             dir_created = time.ctime(os.path.getctime(os.path.join(dirpath, dirname)))
             dir_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, dirname)))
             file_dict[dirname] = 'Directory', \
                 f'Path: {dirpath}', \
-                f'Size: {dir_size} KB', \
+                f'Size: {dir_size}', \
+                f'Created: {dir_created}', \
                 f'Last Modified: {dir_mod_time} '
-
-# for key in file_dict.keys():
-#     if isdir(os.path.join(path, key)):
-#         print(key, file_dict[key])
-#         print('Files and sub-directories: ', os.listdir(os.path.join(path, key)))
-#         print()
 
 # Prints files and directories in current directory (non-recursive)
 print('************ ' + Format.underline + 'Files and directories in current directory' + Format.end + ' ************')
