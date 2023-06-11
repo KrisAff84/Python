@@ -37,3 +37,16 @@ def size_convert(s):
 
 print(size_convert(dir_size))
 
+def get_dir_size(path):
+    try:
+        dirsize = 0
+        with os.scandir(path) as itr:
+            for entry in itr:
+                if entry.is_file(follow_symlinks=False):
+                    dirsize += entry.stat().st_size
+                elif entry.is_dir(follow_symlinks=False):
+                    dirsize += get_dir_size(entry.path)
+        return dirsize
+    except PermissionError:
+        dirsize = os.path.getsize(path)
+        return dirsize
