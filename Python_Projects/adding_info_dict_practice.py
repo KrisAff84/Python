@@ -84,9 +84,11 @@ for dirpath, dirnames, filenames in os.walk(path):
                 f'Size: {dir_size}', \
                 f'Created: {dir_created}', \
                 f'Last Modified: {dir_mod_time} '
-
+total_items = len(file_dict)
 # Prints files and directories in current directory (non-recursive)
 print('************ ' + Format.underline + 'Files and directories in current directory' + Format.end + ' ************')
+print()
+print(f'Total items in directory: {total_items}')
 print()
 print(Format.underline + 'DIRECTORIES:' + Format.end)
 for key in file_dict.keys():
@@ -128,3 +130,4 @@ while True:
     else:
         print('File not found!')
     print()
+
