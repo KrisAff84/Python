@@ -9,18 +9,17 @@ class Format:      # defines various text styles
 
 
 def get_dir_size(path):
-    try:
-        dirsize = 0
-        with os.scandir(path) as itr:
-            for entry in itr:
-                if entry.is_file(follow_symlinks=False):
-                    dirsize += entry.stat().st_size
-                elif entry.is_dir(follow_symlinks=False):
-                    dirsize += get_dir_size(entry.path)
-        return dirsize
-    except PermissionError:
-        dirsize = os.path.getsize(path)
-        return dirsize
+    dirsize = 0
+    for dirpath, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+           if isfile(os.path.join(path, filename)):
+               dirsize += os.path.getsize(os.path.join(path, filename))
+        for dirname in dirnames:
+            if isdir(os.path.join(path, dirname)):
+               dirsize += get_dir_size(os.path.join(path, dirname))
+
+    return dirsize
+
 
 
 def size_convert(s):
@@ -42,7 +41,6 @@ def size_convert(s):
 
 isfile = os.path.isfile
 isdir = os.path.isdir
-
 
 # Prompt for path to catalog
 # Prints current directory path
