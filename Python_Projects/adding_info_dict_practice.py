@@ -70,7 +70,7 @@ while True:
         print()
         break
     else:
-        print('Please enter a valid path: ')
+        print('Please enter a valid path!')
 
 # Adds files and directories recursively to dictionary file_dict
 file_dict = {}
