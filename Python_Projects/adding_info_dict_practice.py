@@ -39,6 +39,17 @@ def size_convert(s):
         return str(s) + ' Bytes'
 
 
+def created(path1, path2):
+    path = os.path.join(path1, path2)
+    created = time.ctime(os.path.getctime(path))
+    return created
+
+
+def modified(path1, path2):
+    path = os.path.join(path1, path2)
+    modified = time.ctime(os.path.getmtime(path))
+    return modified
+
 isfile = os.path.isfile
 isdir = os.path.isdir
 
@@ -67,23 +78,23 @@ for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
         if isfile(os.path.join(dirpath, filename)):
             file_size = size_convert(os.path.getsize(os.path.join(dirpath, filename)))
-            file_created = time.ctime(os.path.getctime(os.path.join(dirpath, filename)))
-            file_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, filename)))
+            file_created = created(dirpath, filename)
+            file_mod_time = modified(dirpath, filename)
             file_dict[filename] = 'File', \
-                f'Path: {dirpath}', \
-                f'Size: {file_size}', \
-                f'Created: {file_created}', \
-                f'Last Modified: {file_mod_time} '
+                'Path: ' + dirpath, \
+                'Size: ' + file_size, \
+                'Created: ' + file_created, \
+                'Last Modified: ' + file_mod_time
     for dirname in dirnames:
         if isdir(os.path.join(dirpath, dirname)):
             dir_size = size_convert(get_dir_size(os.path.join(dirpath, dirname)))
-            dir_created = time.ctime(os.path.getctime(os.path.join(dirpath, dirname)))
-            dir_mod_time = time.ctime(os.path.getmtime(os.path.join(dirpath, dirname)))
+            dir_created = created(dirpath, dirname)
+            dir_mod_time = modified(dirpath, dirname)
             file_dict[dirname] = 'Directory', \
-                f'Path: {dirpath}', \
+                'Path: ' + dirpath, \
                 f'Size: {dir_size}', \
-                f'Created: {dir_created}', \
-                f'Last Modified: {dir_mod_time} '
+                'Created: ' + dir_created, \
+                'Last Modified: ' + dir_mod_time
 total_items = len(file_dict)
 # Prints files and directories in current directory (non-recursive)
 print('************ ' + Format.underline + 'Files and directories in current directory' + Format.end + ' ************')
