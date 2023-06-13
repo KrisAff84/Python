@@ -1,3 +1,4 @@
 from random_name_function import *
+from file_dict_function import *
 
-random_name_gen()
+file_dict()
