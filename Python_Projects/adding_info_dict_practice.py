@@ -73,33 +73,39 @@ while True:
         print('Please enter a valid path!')
 
 # Adds files and directories recursively to dictionary file_dict
-file_dict = {}
-for dirpath, dirnames, filenames in os.walk(path):
-    for filename in filenames:
-        if isfile(os.path.join(dirpath, filename)):
-            file_size = size_convert(os.path.getsize(os.path.join(dirpath, filename)))
-            file_created = created(dirpath, filename)
-            file_mod_time = modified(dirpath, filename)
-            file_dict[filename] = 'File', \
-                'Path: ' + dirpath, \
-                'Size: ' + file_size, \
-                'Created: ' + file_created, \
-                'Last Modified: ' + file_mod_time
-    for dirname in dirnames:
-        if isdir(os.path.join(dirpath, dirname)):
-            dir_size = size_convert(get_dir_size(os.path.join(dirpath, dirname)))
-            dir_created = created(dirpath, dirname)
-            dir_mod_time = modified(dirpath, dirname)
-            file_dict[dirname] = 'Directory', \
-                'Path: ' + dirpath, \
-                f'Size: {dir_size}', \
-                'Created: ' + dir_created, \
-                'Last Modified: ' + dir_mod_time
-total_items = len(file_dict)
+def file_dict(path):
+    file_dict = {}
+    for dirpath, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            if isfile(os.path.join(dirpath, filename)):
+                file_size = size_convert(os.path.getsize(os.path.join(dirpath, filename)))
+                file_created = created(dirpath, filename)
+                file_mod_time = modified(dirpath, filename)
+                file_dict[filename] = 'File', \
+                    'Path: ' + dirpath, \
+                    'Size: ' + file_size, \
+                    'Created: ' + file_created, \
+                    'Last Modified: ' + file_mod_time
+        for dirname in dirnames:
+            if isdir(os.path.join(dirpath, dirname)):
+                dir_size = size_convert(get_dir_size(os.path.join(dirpath, dirname)))
+                dir_created = created(dirpath, dirname)
+                dir_mod_time = modified(dirpath, dirname)
+                file_dict[dirname] = 'Directory', \
+                    'Path: ' + dirpath, \
+                    f'Size: {dir_size}', \
+                    'Created: ' + dir_created, \
+                    'Last Modified: ' + dir_mod_time
+                create_dictionary(join(dirpath, dirname))
+    return file_dict()
+
+total_items = len(file_dict())
+
+
 # Prints files and directories in current directory (non-recursive)
 print('************ ' + Format.underline + 'Files and directories in current directory' + Format.end + ' ************')
 print()
-print(f'Total items in directory: {total_items}')
+print(f'Total items in directory: ')
 print()
 print(Format.underline + 'DIRECTORIES:' + Format.end)
 for key in file_dict.keys():

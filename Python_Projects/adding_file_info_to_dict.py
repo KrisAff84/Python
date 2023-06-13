@@ -1,26 +1,31 @@
 import os
 import time
 
+# Variables for commonly used methods
+isfile = os.path.isfile
+isdir = os.path.isdir
+join = os.path.join
 
-class Format:      # defines various text styles
+# Defines various text styles
+class Format:
     end = '\033[0m'
     underline = '\033[4m'
     green = '\033[92m'
 
-
+# Gets size of directories recursively
 def get_dir_size(path):
     dirsize = 0
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
-            if isfile(os.path.join(path, filename)):
-                dirsize += os.path.getsize(os.path.join(path, filename))
+            if isfile(join(path, filename)):
+                dirsize += os.path.getsize(join(path, filename))
         for dirname in dirnames:
-            if isdir(os.path.join(path, dirname)):
-                dirsize += get_dir_size(os.path.join(path, dirname))
+            if isdir(join(path, dirname)):
+                dirsize += get_dir_size(join(path, dirname))
 
     return dirsize
 
-
+# Converts Bytes to KB, MB, GB, and TB
 def size_convert(s):
     if 1000 <= s < 1000 ** 2:
         s = round(s / 1000, 2)
@@ -38,20 +43,18 @@ def size_convert(s):
         return str(s) + ' Bytes'
 
 
+# The two functions below return created and modified time
 def created(path1, path2):
-    path = os.path.join(path1, path2)
+    path = join(path1, path2)
     created = time.ctime(os.path.getctime(path))
     return created
 
 
 def modified(path1, path2):
-    path = os.path.join(path1, path2)
+    path = join(path1, path2)
     modified = time.ctime(os.path.getmtime(path))
     return modified
 
-
-isfile = os.path.isfile
-isdir = os.path.isdir
 
 # Prompt for path to catalog
 # Prints current directory path
@@ -76,8 +79,8 @@ while True:
 file_dict = {}
 for dirpath, dirnames, filenames in os.walk(path):
     for filename in filenames:
-        if isfile(os.path.join(dirpath, filename)):
-            file_size = size_convert(os.path.getsize(os.path.join(dirpath, filename)))
+        if isfile(join(dirpath, filename)):
+            file_size = size_convert(os.path.getsize(join(dirpath, filename)))
             file_created = created(dirpath, filename)
             file_mod_time = modified(dirpath, filename)
             file_dict[filename] = 'File', \
@@ -86,8 +89,8 @@ for dirpath, dirnames, filenames in os.walk(path):
                 'Created: ' + file_created, \
                 'Last Modified: ' + file_mod_time
     for dirname in dirnames:
-        if isdir(os.path.join(dirpath, dirname)):
-            dir_size = size_convert(get_dir_size(os.path.join(dirpath, dirname)))
+        if isdir(join(dirpath, dirname)):
+            dir_size = size_convert(get_dir_size(join(dirpath, dirname)))
             dir_created = created(dirpath, dirname)
             dir_mod_time = modified(dirpath, dirname)
             file_dict[dirname] = 'Directory', \
@@ -96,6 +99,7 @@ for dirpath, dirnames, filenames in os.walk(path):
                 'Created: ' + dir_created, \
                 'Last Modified: ' + dir_mod_time
 total_items = len(file_dict)
+
 # Prints files and directories in current directory (non-recursive)
 print('************ ' + Format.underline + 'Files and directories in current directory' + Format.end + ' ************')
 print()
@@ -103,12 +107,12 @@ print(f'Total items in directory: {total_items}')
 print()
 print(Format.underline + 'DIRECTORIES:' + Format.end)
 for key in file_dict.keys():
-    if isdir(os.path.join(path, key)):
+    if isdir(join(path, key)):
         print(key)
 print()
 print(Format.underline + 'FILES:' + Format.end)
 for key in file_dict.keys():
-    if isfile(os.path.join(path, key)):
+    if isfile(join(path, key)):
         print(key)
 print()
 
@@ -123,15 +127,15 @@ while True:
         print('Goodbye for now!')
         break
     elif user_input in file_dict:
-        if isdir(os.path.join(path, user_input)):
+        if isdir(join(path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
-            print('Files and sub-directories: ', os.listdir(os.path.join(path, user_input)))
-            amended_path = os.path.join(path, user_input)
+            print('Files and sub-directories: ', os.listdir(join(path, user_input)))
+            amended_path = join(path, user_input)
             print()
-        elif isdir(os.path.join(amended_path, user_input)):
+        elif isdir(join(amended_path, user_input)):
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
-            print('Files and sub-directories: ', os.listdir(os.path.join(amended_path, user_input)))
-            amended_path = os.path.join(amended_path, user_input)
+            print('Files and sub-directories: ', os.listdir(join(amended_path, user_input)))
+            amended_path = join(amended_path, user_input)
             print()
         else:
             print(Format.green + user_input + Format.end, ' : ', file_dict[user_input])
