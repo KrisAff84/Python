@@ -1,4 +1,5 @@
 # Gets size of directory
+# Trying out different methods
 
 import os
 
