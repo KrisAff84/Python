@@ -18,5 +18,5 @@ class Car:
         
 my_car = Car('Lexus', 'RX330', 2005)
 print(my_car.get_descriptive_name())
-
+print(my_car.odometer_reading)
     
