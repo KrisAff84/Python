@@ -3,6 +3,7 @@ import pytest
 
 @pytest.fixture
 def employee():
+    """Creates an employee object for testing multiple parameters"""
     return Employee('John', 'Doe', 'Software Engineer', 140000)
 
 def test_give_default_raise(employee):
