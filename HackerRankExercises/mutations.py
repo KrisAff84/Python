@@ -1,3 +1,8 @@
+"""
+This script accepts input of a string (s), then input for index of character (i),
+and new character (c) and replaces the character at index i with new character c.
+"""
+
 def mutate_string(string, position, character):
     # [:position] takes the string from one character before the value of position
     # [position+1:] takes the string from one character after the value of position
